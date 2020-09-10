@@ -1,6 +1,7 @@
 package async.demo.verticle;
 
 import io.vertx.core.*;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -33,21 +34,7 @@ public class SenderVerticle extends AbstractVerticle {
 
     private void syncEvent(RoutingContext ctx){
         String msg = ctx.getBodyAsString();
-
-        Promise promise = Promise.promise();
-
-        AsyncResult asyncResult = callB(msg).future();
-        if (asyncResult.succeeded()) {
-            AsyncResult asyncC = callC(msg).future();
-            if (asyncC.succeeded()){
-                System.out.println("Done!");
-            }
-            promise.complete();
-        }
-        else {
-            promise.fail(asyncResult.cause());
-            System.out.println("Failed");
-        }
+        callB(msg).future().compose(h -> callC(msg).future().result());
 
     }
 
