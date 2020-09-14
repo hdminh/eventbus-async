@@ -1,9 +1,9 @@
-package async.demo;
+package server.demo;
 
-import async.demo.verticle.PrintOutVerticle;
-import async.demo.verticle.SenderVerticle;
-import async.demo.verticle.TimerVerticle;
 import io.vertx.core.Vertx;
+import server.demo.verticle.PrintOutVerticle;
+import server.demo.verticle.SenderVerticle;
+import server.demo.verticle.TimerVerticle;
 
 public class Main {
     public static void main(String[] args) {

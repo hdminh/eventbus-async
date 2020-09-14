@@ -1,4 +1,4 @@
-package async.demo.verticle;
+package server.demo.verticle;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -8,18 +8,26 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class TimerVerticle extends AbstractVerticle {
+
     @Override
     public void start(Promise<Void> startFuture) {
-        System.out.println("B start");
+        log.info("B start");
         vertx.eventBus().consumer("address.b", this::handler);
         startFuture.complete();
     }
 
     private void handler(Message<String> msg) {
-        vertx.setTimer(2000, h -> {
-            msg.reply("Reply from B");
-            System.out.println("B reply");
-        });
+        long sleepTime = Long.valueOf(msg.body());
+
+        try {
+            vertx.setTimer(sleepTime, id -> {
+                msg.reply("I'm sleep " + sleepTime);
+                log.info(sleepTime);
+                vertx.cancelTimer(id);
+            });
+        } catch (RuntimeException e) {
+            msg.fail(404, e.getMessage());
+        }
     }
 
     @Override
