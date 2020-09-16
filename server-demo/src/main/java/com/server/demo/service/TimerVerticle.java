@@ -1,4 +1,4 @@
-package server.demo.verticle;
+package com.server.demo.service;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;

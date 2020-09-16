@@ -10,17 +10,17 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>server-demo</module>
-        <module>client-demo</module>
         <module>dagger-demo</module>
+        <module>client-demo</module>
     </modules>
     <properties>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <basePackage>async.demo</basePackage>
-        <start-class>async.demo.server.demo.Main</start-class>
+        <start-class>async.demo.com.gateway.demo.RabbitClientMain</start-class>
 
-        <vertx.version>3.9.0</vertx.version>
+        <vertx.version>3.9.2</vertx.version>
         <lombok.version>1.18.12</lombok.version>
         <log4j.version>2.13.3</log4j.version>
     </properties>
@@ -49,6 +49,10 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-rabbitmq-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

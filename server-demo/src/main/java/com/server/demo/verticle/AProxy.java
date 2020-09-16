@@ -1,5 +1,6 @@
-package server.demo.verticle;
+package com.server.demo.verticle;
 
+import com.server.demo.proxy.SenderVerticle;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.web.client.WebClient;

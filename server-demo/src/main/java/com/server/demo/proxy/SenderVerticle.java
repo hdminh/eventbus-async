@@ -1,4 +1,4 @@
-package server.demo.verticle;
+package com.server.demo.proxy;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.CompositeFuture;

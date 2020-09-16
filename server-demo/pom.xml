@@ -13,8 +13,8 @@
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <basePackage>async.demo.server.demo</basePackage>
-        <start-class>async.demo.server.demo.Main</start-class>
+        <basePackage>async.demo.com.server.demo</basePackage>
+        <start-class>async.demo.com.server.demo.RabbitServerMain</start-class>
     </properties>
 
 

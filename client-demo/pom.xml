@@ -11,5 +11,12 @@
 
     <artifactId>client-demo</artifactId>
 
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <basePackage>async.demo.com.gateway.demo</basePackage>
+        <start-class>async.demo.com.gateway.demo.RabbitClientMain</start-class>
+    </properties>
+
 
 </project>

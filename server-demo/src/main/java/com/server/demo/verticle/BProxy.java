@@ -1,4 +1,4 @@
-package server.demo.verticle;
+package com.server.demo.verticle;
 
 import io.vertx.core.AbstractVerticle;
 
