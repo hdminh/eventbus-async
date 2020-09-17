@@ -2,6 +2,7 @@ package com.gateway.demo.client;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rabbitmq.RabbitMQClient;
@@ -10,16 +11,21 @@ import io.vertx.rabbitmq.RabbitMQMessage;
 import io.vertx.rabbitmq.RabbitMQOptions;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Log4j2
 public class RabbitClient extends AbstractVerticle {
+
+    private Map<String, Handler<JsonObject>> mapJobs = new ConcurrentHashMap<>();
     protected RabbitMQClient client;
     private static final String SERVER_QUEUE = "server.queue";
     private static final String CLIENT_QUEUE = "client.queue";
 
     @Override
-    public void start(Promise<Void> startPromise) {
+    public void start(Promise<Void> promise) {
+
         RabbitMQOptions config = new RabbitMQOptions();
         config.setUser("guest");
         config.setPassword("guest");
@@ -28,14 +34,14 @@ public class RabbitClient extends AbstractVerticle {
 
         client = RabbitMQClient.create(vertx, config);
         client.start(this::handleStart);
-        
-        vertx.setTimer(1000, handler -> sendMessage("minh dz"));
-    }
 
-    public void sendMessage(String message) {
-        String correlationId = UUID.randomUUID().toString();
-        publishMessageToQueue(buildMessage(message, correlationId));
+        vertx.eventBus().consumer("vertx.getAll", handler -> {
+            String correlationId = UUID.randomUUID().toString();
+            JsonObject message = buildMessage(null, correlationId);
+            publishMessageToQueue(message, handler::reply);
+        });
     }
+    
 
     private void handleStart(AsyncResult<Void> result) {
         if (result.succeeded()) {
@@ -83,19 +89,24 @@ public class RabbitClient extends AbstractVerticle {
     }
 
     private void handleMessage(RabbitMQMessage message) {
-        JsonObject msgObj = message.body().toJsonObject();
-        log.info(msgObj);
+        String correlationId = message.properties().correlationId();
+        if (mapJobs.containsKey(correlationId)) {
+            mapJobs.remove(correlationId)
+                    .handle(new JsonObject(message.body()));
+        }
     }
 
-    private void publishMessageToQueue(JsonObject message) {
-        client.basicPublish("", SERVER_QUEUE, message, this::handlePublishMessage);
+    private void publishMessageToQueue(JsonObject message, Handler<JsonObject> callback) {
+        String correlationId = message.getJsonObject("properties").getString("correlationId");
+        client.basicPublish("", SERVER_QUEUE, message, handler -> handlePublishMessage(handler, correlationId, callback));
     }
 
-    private void handlePublishMessage(AsyncResult<Void> result) {
-        if (result.succeeded()) {
+    private void handlePublishMessage(AsyncResult<Void> result, String correlationId, Handler<JsonObject> callback) {
+        if (result.failed()) {
             log.info("Message Published!");
-        } else {
             log.error("Message Publish failed!");
+        } else {
+            mapJobs.put(correlationId, callback);
         }
     }
 }

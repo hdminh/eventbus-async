@@ -7,9 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="client-demo" />
+        <module name="common-demo" />
         <module name="server-demo" />
         <module name="dagger-demo" />
-        <module name="client-demo" />
       </profile>
     </annotationProcessing>
   </component>

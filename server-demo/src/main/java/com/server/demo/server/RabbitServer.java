@@ -64,7 +64,8 @@ public class RabbitServer extends AbstractVerticle {
         String correlationId = message.properties().correlationId();
         replyQueueName = message.properties().replyTo();
         JsonObject bodyObj = message.body().toJsonObject();
-        String value = bodyObj.getString("value");
+//        String value = bodyObj.getString("value");
+        String value = "Minh";
         JsonObject replyObj = buildMessage(value, correlationId);
 
         publishMessageToQueue(client, replyObj, replyQueueName);
