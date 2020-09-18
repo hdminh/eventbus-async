@@ -1,9 +1,11 @@
 package com.gateway.demo.client;
 
+import com.common.demo.message.RabbitMessage;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rabbitmq.RabbitMQClient;
 import io.vertx.rabbitmq.RabbitMQConsumer;
@@ -36,12 +38,18 @@ public class RabbitClient extends AbstractVerticle {
         client.start(this::handleStart);
 
         vertx.eventBus().consumer("vertx.getAll", handler -> {
-            String correlationId = UUID.randomUUID().toString();
-            JsonObject message = buildMessage(null, correlationId);
-            publishMessageToQueue(message, handler::reply);
+            sendMessage("a", "a", handler);
         });
     }
-    
+
+    private void sendMessage(String service, String action, Message<Object> handler) {
+        String correlationId = UUID.randomUUID().toString();
+        JsonObject message = RabbitMessage.builder()
+                .correlationId(correlationId)
+                .replyQueue(CLIENT_QUEUE)
+                .service(service).action(action).build().toJson();
+        publishMessageToQueue(message, handler::reply);
+    }
 
     private void handleStart(AsyncResult<Void> result) {
         if (result.succeeded()) {
@@ -67,25 +75,6 @@ public class RabbitClient extends AbstractVerticle {
             result.result().handler(this::handleMessage);
         }
 
-    }
-
-    protected JsonObject buildMessage(String value, String correlationId) {
-        return new JsonObject()
-                .put("properties", buildProperties(correlationId))
-                .put("body", buildBody(value));
-    }
-
-    private JsonObject buildBody(String value) {
-        return new JsonObject()
-                .put("value", value);
-    }
-
-    private JsonObject buildProperties(String correlationId) {
-        return new JsonObject()
-                .put("correlationId", correlationId)
-                .put("replyTo", CLIENT_QUEUE)
-                .put("contentType", "application/json")
-                .put("contentEncoding", "UTF-8");
     }
 
     private void handleMessage(RabbitMQMessage message) {

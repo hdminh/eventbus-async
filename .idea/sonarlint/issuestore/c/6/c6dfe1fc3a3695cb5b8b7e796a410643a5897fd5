@@ -1,0 +1,9 @@
+
+Q
+java:S2130"8Use "Long.parseLong" for this string-to-long conversion.(“éÉ‡úÿÿÿÿ
+L
+java:S1874",Remove this use of "stop"; it is deprecated.(¯›ßéýÿÿÿÿ8Ëøð±É.
+A
+java:S1185"(Remove this method to simply inherit it.(—ªÛ¯ùÿÿÿÿ
+j
+java:S1874"JDon't override a deprecated method or explicitly mark it as "@Deprecated".(—ªÛ¯ùÿÿÿÿ8Ëøð±É.

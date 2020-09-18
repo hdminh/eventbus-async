@@ -1,0 +1,11 @@
+
+E
+java:S1602",Remove useless curly braces around statement(Îå±¨üÿÿÿÿ
+š
+java:S1186"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(ÕÙÐšûÿÿÿÿ
+D
+java:S1481"+Remove this unused "result" local variable.(äÉ°õùÿÿÿÿ
+e
+java:S1874"JDon't override a deprecated method or explicitly mark it as "@Deprecated".(ÝèÙ„8˜¡ñ±É.
+j
+java:S1874"JDon't override a deprecated method or explicitly mark it as "@Deprecated".(ÕÙÐšûÿÿÿÿ8˜¡ñ±É.

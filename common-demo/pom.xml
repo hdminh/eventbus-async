@@ -11,5 +11,9 @@
 
     <artifactId>common-demo</artifactId>
 
-
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <basePackage>async.demo.com.common.demo</basePackage>
+    </properties>
 </project>

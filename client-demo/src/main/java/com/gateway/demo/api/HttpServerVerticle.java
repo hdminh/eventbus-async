@@ -3,14 +3,20 @@ package com.gateway.demo.api;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.UUID;
+
 @Log4j2
 public class HttpServerVerticle extends AbstractVerticle {
+
+    private static final String RABBIT_SERVICE_QUEUE = "rabbit.service.queue";
+
     @Override
     public void start(Promise<Void> promise) {
         Router router = Router.router(vertx);
@@ -36,25 +42,25 @@ public class HttpServerVerticle extends AbstractVerticle {
 
     private void updatePeople(RoutingContext ctx) {
         JsonObject people = ctx.getBody().toJsonObject();
-        vertx.eventBus().request("vertx.updatePeople", people,
+        vertx.eventBus().request(RABBIT_SERVICE_QUEUE, people,
                 reply -> ctx.request().response().setStatusCode(200).end());
     }
 
     private void deletePeople(RoutingContext ctx) {
         String id = ctx.pathParam("id");
-        vertx.eventBus().request("vertx.deletePeople", id,
+        vertx.eventBus().request(RABBIT_SERVICE_QUEUE, id,
                 reply -> ctx.request().response().setStatusCode(200).end());
     }
 
     private void addPeople(RoutingContext ctx) {
         JsonObject people = ctx.getBody().toJsonObject();
-        vertx.eventBus().request("vertx.addPeople", people,
+        vertx.eventBus().request(RABBIT_SERVICE_QUEUE, people,
                 reply -> ctx.request().response().setStatusCode(200).end());
     }
 
     private void getById(RoutingContext ctx) {
         String id = ctx.pathParam("id");
-        vertx.eventBus().request("vertx.getById", id,
+        vertx.eventBus().request(RABBIT_SERVICE_QUEUE, id,
                 reply -> {
                     if (reply.succeeded()) {
                         ctx.request().response()
@@ -68,13 +74,16 @@ public class HttpServerVerticle extends AbstractVerticle {
     }
 
     void getAll(RoutingContext ctx) {
-        vertx.eventBus().request("vertx.getAll", null,
+        JsonObject message = new JsonObject()
+                .put("correlationId", UUID.randomUUID().toString())
+                .put("")
+        vertx.eventBus().request(RABBIT_SERVICE_QUEUE, null,
                 reply -> {
                     if (reply.succeeded()) {
                         ctx.request().response()
                                 .putHeader("content-type", "application/json")
                                 .setStatusCode(200)
-                                .end(reply.result().body().toString());
+                                .end(((JsonArray) reply.result().body()).encode());
                     } else {
                         ctx.request().response().end(reply.cause().getMessage());
                     }
